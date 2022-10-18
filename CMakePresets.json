@@ -1,0 +1,182 @@
+{
+  "version": 2,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "displayName": "base build",
+      "binaryDir": "${sourceDir}/build",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_PREFIX_PATH": "${sourceDir}/bin"
+      }
+    },
+    {
+      "name": "base-gcc",
+      "displayName": "base gcc config",
+      "binaryDir": "${sourceDir}/buildgcc",
+      "inherits": [ "base" ],
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Wextra-semi -Wformat=2 -Wignored-qualifiers -Wmissing-braces -Wmissing-field-initializers -Werror=missing-field-initializers -Woverloaded-virtual -Wpedantic -Wreorder -Wreturn-type -Wshadow -Wsuggest-override -Wswitch-enum -Wuninitialized -Wunused -Wduplicated-branches -Wduplicated-cond -Wformat-truncation -Wsuggest-final-methods -Wsuggest-final-types -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Wno-sign-conversion -Wmisleading-indentation -Wlogical-op -Wnull-dereference -Wuseless-cast -Wno-volatile -Wno-deprecated-declarations"
+      }
+    },
+    {
+      "name": "base-clang",
+      "displayName": "base clang config",
+      "binaryDir": "${sourceDir}/buildclang",
+      "inherits": [ "base" ],
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Wextra-semi -Wformat=2 -Wignored-qualifiers -Wmissing-braces -Wmissing-field-initializers -Werror=missing-field-initializers -Woverloaded-virtual -Wpedantic -Wreorder -Wreturn-type -Wshadow -Wsuggest-override -Wswitch-enum -Wuninitialized -Wcomma -Wnon-virtual-dtor -Wold-style-cast -Wcast-align -Wno-sign-conversion -Wno-deprecated-declarations"
+      }
+    },
+    {
+      "name": "base-msvc",
+      "displayName": "base msvc config",
+      "binaryDir": "${sourceDir}/buildmsvc",
+      "inherits": [ "base" ],
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "msvc",
+        "CMAKE_CXX_FLAGS": "/Wx /W4 /openmp:llvm /permissive"
+      }
+    },
+    {
+      "name": "full",
+      "displayName": "turns on every optional build switch",
+      "inherits": [ "base" ],
+      "cacheVariables": {
+        "enable-all-tests": "ON",
+        "enable-benchmark": "ON",
+        "enable-clang-format": "ON",
+        "enable-cppcheck": "ON",
+        "enable-docs": "ON",
+        "enable-examples": "ON"
+      }
+    },
+    {
+      "name": "release-gcc",
+      "displayName": "full gcc config in release mode",
+      "inherits": [ "full", "base-gcc" ],
+    },
+    {
+      "name": "release-clang",
+      "displayName": "full clang config in release mode",
+      "inherits": [ "full", "base-clang" ],
+    },
+    {
+      "name": "release-msvc",
+      "displayName": "full msvc config in release",
+      "inherits": [ "full", "base-msvc" ],
+    },
+    {
+      "name": "debug-gcc",
+      "displayName": "full gcc config in debug mode",
+      "inherits": [ "full", "base-gcc" ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "debug-clang",
+      "displayName": "full clang config in debug mode",
+      "inherits": [ "full", "base-clang" ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "debug-msvc",
+      "displayName": "full msvc config in debug mode",
+      "inherits": [ "full", "base-msvc" ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "base-gcc",
+      "description": "build for ${presetName}",
+      "configurePreset": "base-gcc"
+    },
+    {
+      "name": "base-clang",
+      "description": "build for ${presetName}",
+      "configurePreset": "base-clang"
+    },
+    {
+      "name": "base-msvc",
+      "description": "build for ${presetName}",
+      "configurePreset": "base-msvc"
+    },
+    {
+      "name": "debug-gcc",
+      "displayName": "full gcc config in debug mode",
+      "configurePreset": "debug-gcc"
+    },
+    {
+      "name": "debug-clang",
+      "displayName": "full clang config in debug mode",
+      "configurePreset": "debug-clang"
+    },
+    {
+      "name": "debug-msvc",
+      "displayName": "full msvc config in debug mode",
+      "configurePreset": "debug-msvc"
+    },
+    {
+      "name": "release-gcc",
+      "displayName": "full gcc config in release mode",
+      "configurePreset": "release-gcc"
+    },
+    {
+      "name": "release-clang",
+      "displayName": "full clang config in release mode",
+      "configurePreset": "release-clang"
+    },
+    {
+      "name": "release-msvc",
+      "displayName": "full msvc config in release mode",
+      "configurePreset": "release-msvc"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "release-gcc",
+      "description": "default test setup, using the base-gcc configuration preset",
+      "configurePreset": "release-gcc",
+      "output": {
+        "shortProgress": true,
+        "outputOnFailure": true,
+        "outputLogFile": "${sourceDir}/ctest.log"
+      }
+    },
+    {
+      "name": "release-clang",
+      "description": "default test setup, using the base-clang configuration preset",
+      "configurePreset": "release-clang",
+      "output": {
+        "shortProgress": true,
+        "outputOnFailure": true,
+        "outputLogFile": "${sourceDir}/ctest.log"
+      }
+    },
+    {
+      "name": "release-msvc",
+      "description": "default test setup, using the base-msvc configuration preset",
+      "configurePreset": "release-msvc",
+      "output": {
+        "shortProgress": true,
+        "outputOnFailure": true,
+        "outputLogFile": "${sourceDir}/ctest.log"
+      }
+    }
+  ]
+}
