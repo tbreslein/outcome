@@ -11,11 +11,12 @@
 #include <variant>
 
 namespace outcome {
-    template<class T, class E>
-    class Outcome
-    {
-        /// Holds either a value of type T, or an exception of type E
-        const std::variant<T, E> _either;
-    };
-}
 
+template<class T, class E>
+class Outcome
+{
+    /// Holds either a value of type T, or an exception of type E
+    const std::variant<T, E> _either;
+};
+
+}

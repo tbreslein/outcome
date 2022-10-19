@@ -56,7 +56,6 @@
         "enable-benchmark": "ON",
         "enable-clang-format": "ON",
         "enable-cppcheck": "ON",
-        "enable-docs": "ON",
         "enable-examples": "ON"
       }
     },
@@ -64,16 +63,25 @@
       "name": "release-gcc",
       "displayName": "full gcc config in release mode",
       "inherits": [ "full", "base-gcc" ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
     },
     {
       "name": "release-clang",
       "displayName": "full clang config in release mode",
       "inherits": [ "full", "base-clang" ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
     },
     {
       "name": "release-msvc",
       "displayName": "full msvc config in release",
       "inherits": [ "full", "base-msvc" ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
     },
     {
       "name": "debug-gcc",

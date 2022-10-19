@@ -223,7 +223,7 @@ if(${enable-unittests} OR ${enable-statictests})
   include(CTest)
   include(doctest)
 
-  add_subdirectory(tests)
+  add_subdirectory(test)
 endif()
 
 # benchmarking

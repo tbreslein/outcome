@@ -6,16 +6,15 @@
 #
 # ===================================================================================================
 
-project(
-  outcome
-  LANGUAGES CXX
-  VERSION 0.0.1)
+# project( outcome LANGUAGES CXX VERSION 0.0.1)
 
 # configuration
 set(PROJECT_VERSION ${CMAKE_PROJECT_VERSION})
 add_library(${PROJECT_NAME} STATIC)
 
-target_sources(${PROJECT_NAME} PRIVATE outcome.hpp)
+set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+
+target_sources(${PROJECT_NAME} PRIVATE "outcome.hpp")
 
 target_include_directories(
   ${PROJECT_NAME}

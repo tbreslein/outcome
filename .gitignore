@@ -32,3 +32,6 @@
 *.app
 
 .direnv/
+.cache/
+build/
+compile_commands.json

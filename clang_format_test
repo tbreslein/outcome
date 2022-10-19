@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+#
+# clang_format_test
+#
+# small bash script to facilitate the clang-format test for hedis. per file in the project, it runs
+# a diff on that file and the clang-format call on that file, and if there is a non-zero diff, it
+# prints that diff's output, and increments the script's error code. that way, only if clang-format
+# finds nothing wrong with all files, the script exits with a non-zero error code.
+#
+# needs the root of the hedis project folder as the first argument.
+
+root=$1
+fullerrcode=0
+for file in $(find "${root}/src" "${root}/examples" "${root}/bench" "${root}/test" -name "*.hpp" -or -name "*.cpp"); do
+    output=$(clang-format "$file" --style=file | diff "$file" - --color=auto -p)
+    errcode=$?
+    fullerrcode=$(($fullerrcode + $errcode))
+    if ((errcode)); then
+        echo "$output"
+    fi
+done
+exit $fullerrcode
+

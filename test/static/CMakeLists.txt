@@ -22,13 +22,9 @@ if(${enable-clang-format})
 endif()
 
 if(${enable-cppcheck})
-  find_program(found_cppcheck NAMES cppcheck)
-  if(NOT found_cppcheck)
-    message(
-      WARNING "could not find cppcheck in your path; skipping cppcheck tests.")
-  else()
-    add_test(NAME "cppcheck_test"
-             COMMAND cppcheck --quiet --error-exitcode=1 --enable=all
-                     --check-config ${PROJECT_SOURCE_DIR}/src)
+  find_program(CMAKE_CXX_CPPCHECK NAMES cppcheck)
+  if(NOT CMAKE_CXX_CPPCHECK)
+      message(WARNING "could not find cppcheck in your path; skipping integration.")
   endif()
+  list(APPEND CMAKE_CXX_CPPCHECK "--enable=all" "--error-exitcode=1")
 endif()
