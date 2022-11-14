@@ -30,14 +30,6 @@ project(outcome
     LANGUAGES CXX
     VERSION 0.1.0)
 
-add_library(outcome STATIC)
-set_target_properties(
-    outcome
-    PROPERTIES
-        LINKER_LANGUAGE CXX)
-
-target_compile_features(outcome PUBLIC cxx_std_20)
-
 # ##############################################################################
 # CMake config options
 # ##############################################################################
@@ -70,23 +62,44 @@ set(OUTCOME_INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_INCLUDEDIR}")
 set(OUTCOME_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_DATADIR}/cmake/outcome")
 set(OUTCOME_INSTALL_PKGCONFIG_DIR "${CMAKE_INSTALL_DATADIR}/pkgconfig")
 
-target_sources(${PROJECT_NAME} PRIVATE "src/outcome.hpp")
+add_library(outcome INTERFACE)
 
 target_include_directories(
-  ${PROJECT_NAME}
-  PUBLIC # NEEDS to be public, so the includes can travel into the executable
-         ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR})
-
-target_include_directories(outcome
-    PUBLIC # NEEDS to be public, so the includes can travel into the executable
+    outcome INTERFACE
         $<BUILD_INTERFACE:${OUTCOME_INCLUDE_DIR}>
         $<INSTALL_INTERFACE:${OUTCOME_INSTALL_INCLUDE_DIR}>)
+
+if(${OUTCOME_TEST})
+    add_subdirectory(test)
+endif()
+
+if(${OUTCOME_EXAMPLES})
+    add_subdirectory(examples)
+endif()
+
+if(${OUTCOME_DOCS})
+    list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+    add_subdirectory(doxygen)
+    file(CREATE_LINK ${CMAKE_BINARY_DIR}/doxygen/sphinx
+        ${CMAKE_CURRENT_LIST_DIR}/docs SYMBOLIC)
+endif()
+
+install(
+    DIRECTORY "${OUTCOME_INCLUDE_DIR}/outcome"
+    DESTINATION "${OUTCOME_INSTALL_INCLUDE_DIR}")
+install(
+    TARGETS outcome
+    EXPORT outcomeTargets)
 
 export(
     TARGETS outcome
     NAMESPACE outcome::
     FILE "${OUTCOME_BINARY_DIR}/outcomeTargets.cmake")
 export(PACKAGE outcome)
+install(
+    EXPORT outcomeTargets
+    NAMESPACE outcome::
+    DESTINATION "${OUTCOME_INSTALL_CMAKE_DIR}")
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
@@ -106,18 +119,3 @@ configure_file("${OUTCOME_SOURCE_DIR}/data/outcome.pc.in"
                "${OUTCOME_BINARY_DIR}/outcome.pc" @ONLY)
 install(FILES "${OUTCOME_BINARY_DIR}/outcome.pc"
         DESTINATION "${OUTCOME_INSTALL_PKGCONFIG_DIR}")
-
-if(${OUTCOME_TEST})
-    add_subdirectory(test)
-endif()
-
-if(${OUTCOME_EXAMPLES})
-    add_subdirectory(examples)
-endif()
-
-if(${OUTCOME_DOCS})
-    list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-    add_subdirectory(doxygen)
-    file(CREATE_LINK ${CMAKE_BINARY_DIR}/doxygen/sphinx
-        ${CMAKE_CURRENT_LIST_DIR}/docs SYMBOLIC)
-endif()
