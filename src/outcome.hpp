@@ -29,36 +29,79 @@
 #include <optional>
 #include <variant>
 
+/// @brief Namespace for this lib
 namespace outcome {
 
+/**
+ * @brief Minimal implementation of Rust's `Result` type aiming to be at least usable for most instances with a minimal
+ * API.
+ * @tparam T Value type
+ * @tparam E Error type
+ *
+ * Under the hood, this is just a small wrapper around std::variant.
+ */
 template <class T, class E>
-struct [[nodiscard]] Outcome {
+class [[nodiscard]] Outcome {
+    /// @brief The std::variant<T,E> that stores either a value or an error.
     std::variant<T, E> _either;
+
+  public:
+    /// @brief Constructs an outcome::Outcome<std::nullopt_t, E>.
     Outcome()
         : _either{std::nullopt} {}
+
     // cppcheck-suppress noExplicitConstructor
-    Outcome(const T value_in)
-        : _either{value_in} {}
+    /// @brief Constructs an outcome::Outcome<T, E> containing the value @p value.
+    Outcome(const T value)
+        : _either{value} {}
+
     // cppcheck-suppress noExplicitConstructor
+    /// @brief Constructs an outcome::Outcome<_, E> containing the error @p error.
     Outcome(const E error)
         : _either{error} {}
-    auto has_error() const -> bool { return std::holds_alternative<E>(this->_either); }
-    auto has_value() const -> bool { return !this->has_error(); }
-    auto value() const -> T { return std::get<T>(this->_either); }
-    auto error() const -> E { return std::get<E>(this->_either); }
+
+    /// @brief Checks whether the object contains an error of type E
+    auto has_error() const noexcept -> bool { return std::holds_alternative<E>(this->_either); }
+
+    /// @brief Checks whether the object contains a value of type T
+    auto has_value() const noexcept -> bool { return !this->has_error(); }
+
+    /// @brief Retrieves the value
+    auto value() const noexcept -> T { return std::get<T>(this->_either); }
+
+    /// @brief Retrieves the error
+    auto error() const noexcept -> E { return std::get<E>(this->_either); }
 };
 
+/**
+ * @brief Specialisation of outcome::Outcome for functions that would otherwise return a void
+ * @tparam E Error type
+ *
+ * This is realised by storing a value of type std::nullopt_t as the value type.
+ */
 template <class E>
-struct [[nodiscard]] Outcome<void, E> {
+class [[nodiscard]] Outcome<void, E> {
+    /// @brief The std::variant<T,E> that stores either a value or an error.
     std::variant<std::nullopt_t, E> _either;
+
+  public:
+    /// @brief Constructs an outcome::Outcome<std::nullopt_t, E>.
     Outcome()
         : _either{std::nullopt} {}
+
     // cppcheck-suppress noExplicitConstructor
+    /// @brief Constructs an outcome::Outcome<std::nullopt_t, E> from the error @p error.
     Outcome(const E error)
         : _either{error} {}
-    auto has_error() const -> bool { return std::holds_alternative<E>(this->_either); }
-    auto has_value() const -> bool { return !this->has_error(); }
-    auto error() const -> E { return std::get<E>(this->_either); }
+
+    /// @brief Checks whether the object contains an error of type E
+    auto has_error() const noexcept -> bool { return std::holds_alternative<E>(this->_either); }
+
+    /// @brief Checks whether the object contains a value of type T
+    auto has_value() const noexcept -> bool { return !this->has_error(); }
+
+    /// @brief Retrieves the error
+    auto error() const noexcept -> E { return std::get<E>(this->_either); }
 };
 
 } // namespace outcome
