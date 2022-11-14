@@ -1,0 +1,8 @@
+prefix=@OUTCOME_INSTALL_PREFIX@
+exec_prefix=${prefix}
+includedir=${prefix}/@OUTCOME_INSTALL_INCLUDE_DIR@
+
+Name: outcome
+Description: Minimal implementation of type similar to Rust's Result
+Version: @PROJECT_VERSION@
+Cflags: -I${includedir}

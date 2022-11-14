@@ -20,9 +20,7 @@
             cppcheck
             clang-tools
             valgrind
-            # ccls
-            cmake-format
-            cmake-language-server
+            ccls
           ];
           buildInputs = [ ];
         };

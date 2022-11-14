@@ -9,14 +9,22 @@ testargs := $(or $(testargs),$(t))
 build:
 	cmake --build build -j${jobs} ${buildargs}
 
-.PHONY: %-gcc %-clang %-msvc
-%-gcc %-clang %-msvc: clean
-	cmake . --preset $@ ${configargs}
+.PHONY: config-example
+config-examples: clean
+	cmake . --preset examples ${configargs}
+
+.PHONY: config-test
+config-test: clean
+	cmake . --preset test ${configargs}
+
+.PHONY: config-all
+config-all: clean
+	cmake . --preset all ${configargs}
 
 .PHONY: test
 test:
-	ctest --output-on-failure --test-dir build -j${jobs} ${testargs}
+	./build/test/tests -a
 
 .PHONY: clean
 clean:
-	rm -rf $(build_folder) $(bin_folder)
+	rm -rf $(build_folder)
