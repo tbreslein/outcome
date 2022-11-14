@@ -51,11 +51,11 @@ set(OUTCOME_DOCS
 # outcome library & binaries
 # ##############################################################################
 
-include(GNUInstallDirs)
-
 set(OUTCOME_SOURCE_DIR "${outcome_SOURCE_DIR}")
 set(OUTCOME_BINARY_DIR "${outcome_BINARY_DIR}")
 set(OUTCOME_INCLUDE_DIR "${outcome_SOURCE_DIR}")
+
+include(GNUInstallDirs)
 
 set(OUTCOME_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 set(OUTCOME_INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_INCLUDEDIR}")
