@@ -81,7 +81,7 @@ class [[nodiscard]] Outcome {
  */
 template <class E>
 class [[nodiscard]] Outcome<void, E> {
-    /// @brief The std::variant<T,E> that stores either a value or an error.
+    /// @brief The std::variant<std::nullopt_t,E> that stores either a std::nullopt or an error.
     std::variant<std::nullopt_t, E> _either;
 
   public:
@@ -97,7 +97,7 @@ class [[nodiscard]] Outcome<void, E> {
     /// @brief Checks whether the object contains an error of type E
     auto has_error() const noexcept -> bool { return std::holds_alternative<E>(this->_either); }
 
-    /// @brief Checks whether the object contains a value of type T
+    /// @brief Checks whether the object contains a std::nullopt
     auto has_value() const noexcept -> bool { return !this->has_error(); }
 
     /// @brief Retrieves the error
