@@ -141,11 +141,8 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif()
 
 set(CTEST_OUTPUT_ON_FAILURE ON)
-# target_compile_definitions(test INTERFACE OUTCOME_USE_ERRORREPORT=1 OUTCOME_USE_MACROS=1)
 add_compile_definitions(OUTCOME_USE_ERRORREPORT OUTCOME_USE_MACROS)
-target_compile_features(outcome INTERFACE cxx_std_20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+target_compile_features(outcome INTERFACE cxx_std_17)
 
 target_link_libraries(test PRIVATE outcome Catch2::Catch2WithMain)
 include(CTest)

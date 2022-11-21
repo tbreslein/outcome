@@ -14,8 +14,9 @@
             cmake
             ninja
             pkg-config
-            gcc
+            gcc12
             conan
+            clang_14
 
             cppcheck
             clang-tools
