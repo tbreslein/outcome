@@ -1,29 +1,19 @@
 build_folder = ./build/
-bin_folder = ./bin/
-jobs := $(or $(jobs),$(j))
 buildargs := $(or $(buildargs),$(b))
 configargs := $(or $(configargs),$(c))
 testargs := $(or $(testargs),$(t))
 
 .PHONY: build
 build:
-	cmake --build build -j${jobs} ${buildargs}
-
-.PHONY: config-example
-config-examples: clean
-	cmake . --preset examples ${configargs}
+	cmake --build $(build_folder) ${buildargs}
 
 .PHONY: config-test
 config-test: clean
-	cmake . --preset test ${configargs}
-
-.PHONY: config-all
-config-all: clean
-	cmake . --preset all ${configargs}
+	cmake -S. -Bbuild ${configargs} -DOUTCOME_TEST=ON -DOUTCOME_USE_ERRORREPORT=ON -DOUTCOME_USE_MACROS=ON
 
 .PHONY: test
 test:
-	./build/test/tests -a
+	./build/test/test -a ${testargs}
 
 .PHONY: clean
 clean:

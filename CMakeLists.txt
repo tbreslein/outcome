@@ -34,13 +34,13 @@ set(OUTCOME_TEST
     OFF
     CACHE BOOL "Builds the unit tests in ./test. Fetches catch2 through CPM.")
 
-set(OUTCOME_USE_ERRORREPORTS
+set(OUTCOME_USE_ERRORREPORT
     OFF
-    CACHE BOOL "Compiles outcome with ErrorReports.")
+    CACHE BOOL "Compiles outcome with ErrorReport.")
 
 set(OUTCOME_USE_MACROS
     OFF
-    CACHE BOOL "Compiles outcome with Macros. Some Macros need ErrorReports.")
+    CACHE BOOL "Compiles outcome with macros")
 
 if(${OUTCOME_USE_ERRORREPORTS})
     add_compile_definitions(OUTCOME_USE_ERRORREPORTS)

@@ -51,7 +51,7 @@ include(${CPM_DOWNLOAD_LOCATION})
 CPMAddPackage(
     NAME catch2
     GITHUB_REPOSITORY catchorg/Catch2
-    VERSION 3.1.1
+    VERSION 3.2.0
 )
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
@@ -61,10 +61,10 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
 set(CTEST_OUTPUT_ON_FAILURE ON)
 
-add_executable(tests test.cpp)
+add_executable(test tests.cpp)
 
-target_link_libraries(tests PRIVATE outcome Catch2::Catch2WithMain)
+target_link_libraries(test PRIVATE outcome Catch2::Catch2WithMain)
 include(CTest)
 enable_testing()
 include(Catch)
-catch_discover_tests(tests)
+catch_discover_tests(test)
