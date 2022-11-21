@@ -26,8 +26,8 @@
 
 #include "outcome/outcome.hpp"
 #include <catch2/catch_all.hpp>
-#include <memory>
 #include <iostream>
+#include <memory>
 
 using namespace outcome;
 
@@ -79,29 +79,28 @@ TEST_CASE("ErrorReport as error value") {
         REQUIRE(failure.error().description == "foobar");
         REQUIRE(failure.error().file == "/some/file");
         REQUIRE(failure.error().line == 42);
-        REQUIRE(failure.error().message == "Error Code 5\n  File: /some/file\n  Line: 42\n  Description: foobar");
+        REQUIRE(failure.error().message == "\n** Error! **\n  Code: 5\n  File: /some/file\n "
+                                           " Line: 42\n  Description: foobar");
     }
 }
 
 TEST_CASE("Value types that are not copy-constructible, but move-constructible") {
-    auto success = []() -> outcome::Outcome<std::unique_ptr<double>, int> {return std::make_unique<double>(2.0); }();
-    auto failure = []() -> outcome::Outcome<std::unique_ptr<double>, int> {return 10; }();
+    auto success = []() -> outcome::Outcome<std::unique_ptr<double>, int> { return std::make_unique<double>(2.0); }();
+    auto failure = []() -> outcome::Outcome<std::unique_ptr<double>, int> { return 10; }();
     SECTION("has_value and has_error still work as expected") {
         REQUIRE(success.has_value());
         REQUIRE_FALSE(success.has_error());
         REQUIRE(failure.has_error());
         REQUIRE_FALSE(failure.has_value());
     }
-    SECTION("retrieving the error value still works") {
-        REQUIRE(failure.error() == 10);
-    }
+    SECTION("retrieving the error value still works") { REQUIRE(failure.error() == 10); }
     SECTION("must use .move() or .ptr() instead of .value()") {
         // v This does not compile since you cannot get the raw value behind an object that is not copy_constructible.
         // REQUIRE(success.value());
 
         // Instead you can get a pointer to the underlying object, which is especially useful for containers like
         // std::unique_ptr
-        static_assert(std::is_same_v<std::unique_ptr<double>*, decltype(success.ptr())>);
+        static_assert(std::is_same_v<std::unique_ptr<double> *, decltype(success.ptr())>);
         REQUIRE(*(success.ptr())->get() == 2.0);
 
         // ... or you use move semantics

@@ -151,8 +151,8 @@ struct ErrorReport {
         , description{description_in}
         , file{file_in}
         , line{line_in}
-        , message{"Error Code " + std::to_string(this->code) + "\n  File: " + this->file +
-                  "\n  Line: " + std::to_string(this->line) + "\n  Description: " + this->description} {}
+        , message{"\n** Error! **\n  Code: " + std::to_string(this->code) + "\n  File: " +
+                  this->file + "\n  Line: " + std::to_string(this->line) + "\n  Description: " + this->description} {}
 };
 
 #endif // OUTCOME_USE_ERRORREPORT
