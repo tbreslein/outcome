@@ -59,9 +59,93 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 # Setup the tests
 # ===============
 
-set(CTEST_OUTPUT_ON_FAILURE ON)
+# create compile_commands.json in the build folder, which is needed for LSPs
+# like ccls and clangd
+set(CMAKE_EXPORT_COMPILE_COMMANDS
+    ON
+    CACHE INTERNAL "Write compile_commands.json; needed for LSPs")
+if(CMAKE_EXPORT_COMPILE_COMMANDS)
+    set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES
+        ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
+endif()
 
 add_executable(test tests.cpp)
+
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "MSVC")
+    target_compile_options(test PRIVATE
+        ${DEFAULT_COMPILE_OPTIONS}
+        $<$<CONFIG:Release>:
+        /Gw # whole program global optimization
+        /GS- # buffer security check: no
+        /GL # whole program optimization: enable link-time code generation
+        # (disables Zi)
+        /GF # enable string pooling
+        >
+        )
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    target_compile_options(test PRIVATE
+        ${DEFAULT_COMPILE_OPTIONS}
+        -fdiagnostics-color=always
+        -Wall
+        -Wextra
+        -Wextra-semi
+        -Wcast-align
+        -Wduplicated-branches
+        -Wdeprecated-copy
+        -Wdeprecated-declarations
+        -Wduplicated-cond
+        -Wformat=2
+        -Wformat-truncation
+        -Wignored-qualifiers
+        -Wlogical-op
+        -Wmissing-braces
+        -Wmisleading-indentation
+        -Wnon-virtual-dtor
+        -Woverloaded-virtual
+        -Wpedantic
+        -Wreorder
+        -Wreturn-type
+        -Wsign-compare
+        -Wsign-conversion
+        -Wshadow
+        -Wsuggest-final-methods
+        -Wsuggest-final-types
+        -Wsuggest-override
+        -Wswitch-enum
+        -Wuninitialized
+        -Wunused
+        -Wvolatile
+        )
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    target_compile_options(test PRIVATE
+        ${DEFAULT_COMPILE_OPTIONS}
+        -Wall
+        -Wextra
+        -Wformat=2
+        -Wcast-align
+        -Wcomma
+        -Wdeprecated-declarations
+        -Wignored-qualifiers
+        -Wmissing-braces
+        -Woverloaded-virtual
+        -Wpedantic
+        -Wreorder
+        -Wreturn-type
+        -Wsign-conversion
+        -Wsuggest-override
+        -Wswitch-enum
+        -Wuninitialized
+        -Wnon-virtual-dtor
+        -fcolor-diagnostics
+        )
+endif()
+
+set(CTEST_OUTPUT_ON_FAILURE ON)
+# target_compile_definitions(test INTERFACE OUTCOME_USE_ERRORREPORT=1 OUTCOME_USE_MACROS=1)
+add_compile_definitions(OUTCOME_USE_ERRORREPORT OUTCOME_USE_MACROS)
+target_compile_features(outcome INTERFACE cxx_std_20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 target_link_libraries(test PRIVATE outcome Catch2::Catch2WithMain)
 include(CTest)

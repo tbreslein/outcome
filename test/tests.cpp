@@ -29,4 +29,54 @@
 
 using namespace outcome;
 
-TEST_CASE("Meshes are construted correctly") { REQUIRE(1 + 2 == 3); }
+TEST_CASE("Outcome works when used as return value") {
+    SECTION("non-failing functions return a value") {
+        auto success = []() -> outcome::Outcome<std::string, int> { return std::string("foo"); };
+        REQUIRE(success().has_value());
+        REQUIRE_FALSE(success().has_error());
+        REQUIRE(success().value() == "foo");
+    }
+    SECTION("non-failing functions return an error") {
+        auto failure = []() -> outcome::Outcome<std::string, int> { return 1; };
+        REQUIRE(failure().has_error());
+        REQUIRE_FALSE(failure().has_value());
+        REQUIRE(failure().error() == 1);
+    }
+}
+
+TEST_CASE("Outcome<void> works when used as return value") {
+    SECTION("non-failing functions return successfully") {
+        auto success = []() -> outcome::Outcome<void, int> { return {}; };
+        REQUIRE(success().has_value());
+        REQUIRE_FALSE(success().has_error());
+        // does not compile, since Outcome<void> does not have a .value() field; this is working as intended
+        // REQUIRE(success().value() == "foo");
+    }
+    SECTION("non-failing functions return an error") {
+        auto failure = []() -> outcome::Outcome<void, int> { return 2; };
+        REQUIRE(failure().has_error());
+        REQUIRE_FALSE(failure().has_value());
+        REQUIRE(failure().error() == 2);
+    }
+}
+
+TEST_CASE("ErrorReport works when used as error value") {
+    SECTION("non-failing functions return a value") {
+        auto success = []() -> outcome::Outcome<std::string, outcome::ErrorReport> { return std::string("foo"); };
+        REQUIRE(success().has_value());
+        REQUIRE_FALSE(success().has_error());
+        REQUIRE(success().value() == "foo");
+    }
+    SECTION("non-failing functions return an error") {
+        auto failure = []() -> outcome::Outcome<std::string, outcome::ErrorReport> {
+            return outcome::ErrorReport(5, "foobar", "/some/file", 42);
+        };
+        REQUIRE(failure().has_error());
+        REQUIRE_FALSE(failure().has_value());
+        REQUIRE(failure().error().code == 5);
+        REQUIRE(failure().error().description == "foobar");
+        REQUIRE(failure().error().file == "/some/file");
+        REQUIRE(failure().error().line == 42);
+        REQUIRE(failure().error().message == "Error Code 5\n  File: /some/file\n  Line: 42\n  Description: foobar");
+    }
+}

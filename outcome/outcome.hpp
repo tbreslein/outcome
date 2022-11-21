@@ -27,6 +27,7 @@
 #pragma once
 
 #include <optional>
+#include <string>
 #include <variant>
 
 /// @brief Namespace for this lib
@@ -103,7 +104,7 @@ class [[nodiscard]] Outcome<void, E> {
     auto error() const noexcept -> E { return std::get<E>(this->_either); }
 };
 
-#ifdef OUTCOME_USE_ERRORREPORTS
+#ifdef OUTCOME_USE_ERRORREPORT
 /**
  * @brief Wrapper around the kind of error that happened
  */
@@ -121,23 +122,17 @@ struct ErrorReport {
      * @param file The source file where the error occurred
      * @param line The line in that file where the error occurred
      */
-    explicit ErrorReport(const int code, const std::string &description, const std::string &file, const int line)
-        : code{code}
-        , description{description}
-        , file{file}
-        , line{line}
-        , message{"Error Code "s + to_string(this->code) + "\n  File: "s + this->file + "\n  Line: "s +
-                  to_string(this->line) + "\n  Description: "s + this->description} {}
+    explicit ErrorReport(const int code_in, const std::string &description_in, const std::string &file_in,
+                         const int line_in)
+        : code{code_in}
+        , description{description_in}
+        , file{file_in}
+        , line{line_in}
+        , message{"Error Code " + std::to_string(this->code) + "\n  File: " + this->file +
+                  "\n  Line: " + std::to_string(this->line) + "\n  Description: " + this->description} {}
 };
 
-/**
- * @brief Convenience using declaration that nails the error type to an outcome::ErrorReport
- * @tparam T The value type for outcome::Outcome
- */
-template <class T>
-using Outcome = Outcome<T, ErrorReport>;
-
-#endif // OUTCOME_USE_ERRORREPORTS
+#endif // OUTCOME_USE_ERRORREPORT
 
 #ifdef OUTCOME_USE_MACROS
 

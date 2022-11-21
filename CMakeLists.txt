@@ -34,22 +34,6 @@ set(OUTCOME_TEST
     OFF
     CACHE BOOL "Builds the unit tests in ./test. Fetches catch2 through CPM.")
 
-set(OUTCOME_USE_ERRORREPORT
-    OFF
-    CACHE BOOL "Compiles outcome with ErrorReport.")
-
-set(OUTCOME_USE_MACROS
-    OFF
-    CACHE BOOL "Compiles outcome with macros")
-
-if(${OUTCOME_USE_ERRORREPORTS})
-    add_compile_definitions(OUTCOME_USE_ERRORREPORTS)
-endif()
-
-if(${OUTCOME_USE_MACROS})
-    add_compile_definitions(OUTCOME_USE_MACROS)
-endif()
-
 # ==========================
 # outcome library & binaries
 # ==========================
@@ -66,6 +50,7 @@ set(OUTCOME_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_DATADIR}/cmake/outcome")
 set(OUTCOME_INSTALL_PKGCONFIG_DIR "${CMAKE_INSTALL_DATADIR}/pkgconfig")
 
 add_library(outcome INTERFACE)
+set_target_properties(outcome PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(
     outcome INTERFACE

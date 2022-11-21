@@ -9,11 +9,15 @@ build:
 
 .PHONY: config-test
 config-test: clean
-	cmake -S. -Bbuild ${configargs} -DOUTCOME_TEST=ON -DOUTCOME_USE_ERRORREPORT=ON -DOUTCOME_USE_MACROS=ON
+	cmake -S. -Bbuild ${configargs} -DOUTCOME_TEST=ON
+
+# .PHONY: config-test
+# config-test: clean
+# 	cmake -S. -Bbuild ${configargs} -DOUTCOME_TEST=ON -DOUTCOME_USE_ERRORREPORT=ON -DOUTCOME_USE_MACROS=ON
 
 .PHONY: test
 test:
-	./build/test/test -a ${testargs}
+	ctest --test-dir ./build/test
 
 .PHONY: clean
 clean:
