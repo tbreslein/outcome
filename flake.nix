@@ -15,12 +15,10 @@
             ninja
             pkg-config
             gcc12
-            conan
             clang_14
 
             cppcheck
             clang-tools
-            valgrind
             ccls
           ];
           buildInputs = [ ];
