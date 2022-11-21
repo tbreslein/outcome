@@ -52,8 +52,15 @@ class [[nodiscard]] Outcome {
 
     // cppcheck-suppress noExplicitConstructor
     /// @brief Constructs an outcome::Outcome<T, E> containing the value @p value.
-    Outcome(const T value)
-        : _either{value} {}
+    Outcome(T value)
+        : _either{[&]() {
+            if constexpr (std::is_copy_constructible_v<T>) {
+                return value;
+            } else {
+                auto raw_ptr = value.release();
+                return T(std::move(raw_ptr));
+            }
+        }()} {}
 
     // cppcheck-suppress noExplicitConstructor
     /// @brief Constructs an outcome::Outcome<_, E> containing the error @p error.
@@ -61,16 +68,32 @@ class [[nodiscard]] Outcome {
         : _either{error} {}
 
     /// @brief Checks whether the object contains an error of type E
-    auto has_error() const noexcept -> bool { return std::holds_alternative<E>(this->_either); }
+    constexpr auto has_error() const noexcept -> bool { return std::holds_alternative<E>(this->_either); }
 
     /// @brief Checks whether the object contains a value of type T
-    auto has_value() const noexcept -> bool { return !this->has_error(); }
+    constexpr auto has_value() const noexcept -> bool { return !this->has_error(); }
 
-    /// @brief Retrieves the value
-    auto value() const noexcept -> T { return std::get<T>(this->_either); }
+    /// @brief Retrieves the value; needs the value to be copy constructible
+    constexpr auto value() const noexcept {
+        static_assert(std::is_copy_constructible_v<T>, ".value() requires T to be copy constructible!");
+        return std::get<T>(this->_either);
+    }
+
+    /// @brief Retrieves a non-const pointer to the underlying object
+    constexpr auto ptr() noexcept { return &std::get<T>(this->_either); }
+
+    /// @brief Retrives a const pointer to the underlying object
+    constexpr auto ptr() const noexcept { return &std::get<T>(this->_either); }
+
+    /// @brief Moves the underlying object out of the outcome::Outcome container
+    constexpr auto move() noexcept -> T {
+        static_assert(std::is_move_constructible_v<T>, ".move() requires T to be move constructible!");
+        auto *raw_ptr = std::get<T>(this->_either).release();
+        return T(raw_ptr);
+    }
 
     /// @brief Retrieves the error
-    auto error() const noexcept -> E { return std::get<E>(this->_either); }
+    constexpr auto error() const noexcept -> E { return std::get<E>(this->_either); }
 };
 
 /**

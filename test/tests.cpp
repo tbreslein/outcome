@@ -26,57 +26,90 @@
 
 #include "outcome/outcome.hpp"
 #include <catch2/catch_all.hpp>
+#include <memory>
+#include <iostream>
 
 using namespace outcome;
 
-TEST_CASE("Outcome works when used as return value") {
+TEST_CASE("Regular value types") {
     SECTION("non-failing functions return a value") {
-        auto success = []() -> outcome::Outcome<std::string, int> { return std::string("foo"); };
-        REQUIRE(success().has_value());
-        REQUIRE_FALSE(success().has_error());
-        REQUIRE(success().value() == "foo");
+        auto success = []() -> outcome::Outcome<std::string, int> { return std::string("foo"); }();
+        REQUIRE(success.has_value());
+        REQUIRE_FALSE(success.has_error());
+        REQUIRE(success.value() == "foo");
     }
     SECTION("non-failing functions return an error") {
-        auto failure = []() -> outcome::Outcome<std::string, int> { return 1; };
-        REQUIRE(failure().has_error());
-        REQUIRE_FALSE(failure().has_value());
-        REQUIRE(failure().error() == 1);
+        auto failure = []() -> outcome::Outcome<std::string, int> { return 1; }();
+        REQUIRE(failure.has_error());
+        REQUIRE_FALSE(failure.has_value());
+        REQUIRE(failure.error() == 1);
     }
 }
 
-TEST_CASE("Outcome<void> works when used as return value") {
+TEST_CASE("void as value type") {
     SECTION("non-failing functions return successfully") {
-        auto success = []() -> outcome::Outcome<void, int> { return {}; };
-        REQUIRE(success().has_value());
-        REQUIRE_FALSE(success().has_error());
+        auto success = []() -> outcome::Outcome<void, int> { return {}; }();
+        REQUIRE(success.has_value());
+        REQUIRE_FALSE(success.has_error());
         // does not compile, since Outcome<void> does not have a .value() field; this is working as intended
         // REQUIRE(success().value() == "foo");
     }
     SECTION("non-failing functions return an error") {
-        auto failure = []() -> outcome::Outcome<void, int> { return 2; };
-        REQUIRE(failure().has_error());
-        REQUIRE_FALSE(failure().has_value());
-        REQUIRE(failure().error() == 2);
+        auto failure = []() -> outcome::Outcome<void, int> { return 2; }();
+        REQUIRE(failure.has_error());
+        REQUIRE_FALSE(failure.has_value());
+        REQUIRE(failure.error() == 2);
     }
 }
 
-TEST_CASE("ErrorReport works when used as error value") {
+TEST_CASE("ErrorReport as error value") {
     SECTION("non-failing functions return a value") {
-        auto success = []() -> outcome::Outcome<std::string, outcome::ErrorReport> { return std::string("foo"); };
-        REQUIRE(success().has_value());
-        REQUIRE_FALSE(success().has_error());
-        REQUIRE(success().value() == "foo");
+        auto success = []() -> outcome::Outcome<std::string, outcome::ErrorReport> { return std::string("foo"); }();
+        REQUIRE(success.has_value());
+        REQUIRE_FALSE(success.has_error());
+        REQUIRE(success.value() == "foo");
     }
     SECTION("non-failing functions return an error") {
         auto failure = []() -> outcome::Outcome<std::string, outcome::ErrorReport> {
             return outcome::ErrorReport(5, "foobar", "/some/file", 42);
-        };
-        REQUIRE(failure().has_error());
-        REQUIRE_FALSE(failure().has_value());
-        REQUIRE(failure().error().code == 5);
-        REQUIRE(failure().error().description == "foobar");
-        REQUIRE(failure().error().file == "/some/file");
-        REQUIRE(failure().error().line == 42);
-        REQUIRE(failure().error().message == "Error Code 5\n  File: /some/file\n  Line: 42\n  Description: foobar");
+        }();
+        REQUIRE(failure.has_error());
+        REQUIRE_FALSE(failure.has_value());
+        REQUIRE(failure.error().code == 5);
+        REQUIRE(failure.error().description == "foobar");
+        REQUIRE(failure.error().file == "/some/file");
+        REQUIRE(failure.error().line == 42);
+        REQUIRE(failure.error().message == "Error Code 5\n  File: /some/file\n  Line: 42\n  Description: foobar");
+    }
+}
+
+TEST_CASE("Value types that are not copy-constructible, but move-constructible") {
+    auto success = []() -> outcome::Outcome<std::unique_ptr<double>, int> {return std::make_unique<double>(2.0); }();
+    auto failure = []() -> outcome::Outcome<std::unique_ptr<double>, int> {return 10; }();
+    SECTION("has_value and has_error still work as expected") {
+        REQUIRE(success.has_value());
+        REQUIRE_FALSE(success.has_error());
+        REQUIRE(failure.has_error());
+        REQUIRE_FALSE(failure.has_value());
+    }
+    SECTION("retrieving the error value still works") {
+        REQUIRE(failure.error() == 10);
+    }
+    SECTION("must use .move() or .ptr() instead of .value()") {
+        // v This does not compile since you cannot get the raw value behind an object that is not copy_constructible.
+        // REQUIRE(success.value());
+
+        // Instead you can get a pointer to the underlying object, which is especially useful for containers like
+        // std::unique_ptr
+        static_assert(std::is_same_v<std::unique_ptr<double>*, decltype(success.ptr())>);
+        REQUIRE(*(success.ptr())->get() == 2.0);
+
+        // ... or you use move semantics
+        auto moved = success.move();
+        static_assert(std::is_same_v<std::unique_ptr<double>, decltype(moved)>);
+        REQUIRE(moved); // moved_foo does contain a value
+
+        // and access the value inside the unique_ptr as usual
+        REQUIRE(*moved.get() == 2.0);
     }
 }
