@@ -1,4 +1,4 @@
-# ===================================================================================================
+# ===============================================================================
 #
 # CMake file configuring the building process for Outcome
 #
@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# ===================================================================================================
+# ===============================================================================
 
 cmake_minimum_required(VERSION 3.24)
 
@@ -30,26 +30,13 @@ project(outcome
     LANGUAGES CXX
     VERSION 0.1.0)
 
-# ##############################################################################
-# CMake config options
-# ##############################################################################
-
-# config time options
 set(OUTCOME_TEST
     OFF
-    CACHE BOOL "Builds the unit tests in ./test. Requires doctest.")
+    CACHE BOOL "Builds the unit tests in ./test. Fetches catch2 through CPM.")
 
-set(OUTCOME_EXAMPLES
-    OFF
-    CACHE BOOL "Builds the examples in ./examples.")
-
-set(OUTCOME_DOCS
-    OFF
-    CACHE BOOL "Builds the documentation. Requires doxygen.")
-
-# ##############################################################################
+# ==========================
 # outcome library & binaries
-# ##############################################################################
+# ==========================
 
 set(OUTCOME_SOURCE_DIR "${outcome_SOURCE_DIR}")
 set(OUTCOME_BINARY_DIR "${outcome_BINARY_DIR}")
@@ -63,6 +50,7 @@ set(OUTCOME_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_DATADIR}/cmake/outcome")
 set(OUTCOME_INSTALL_PKGCONFIG_DIR "${CMAKE_INSTALL_DATADIR}/pkgconfig")
 
 add_library(outcome INTERFACE)
+set_target_properties(outcome PROPERTIES LINKER_LANGUAGE CXX)
 
 target_include_directories(
     outcome INTERFACE
@@ -73,16 +61,9 @@ if(${OUTCOME_TEST})
     add_subdirectory(test)
 endif()
 
-if(${OUTCOME_EXAMPLES})
-    add_subdirectory(examples)
-endif()
-
-if(${OUTCOME_DOCS})
-    list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-    add_subdirectory(doxygen)
-    file(CREATE_LINK ${CMAKE_BINARY_DIR}/doxygen/sphinx
-        ${CMAKE_CURRENT_LIST_DIR}/docs SYMBOLIC)
-endif()
+# ============
+# installation
+# ============
 
 install(
     DIRECTORY "${OUTCOME_INCLUDE_DIR}/outcome"
