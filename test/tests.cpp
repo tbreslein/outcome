@@ -37,6 +37,8 @@ TEST_CASE("Regular value types") {
         REQUIRE(success.has_value());
         REQUIRE_FALSE(success.has_error());
         REQUIRE(success.value() == "foo");
+        static_assert(std::is_same_v<std::string *, decltype(success.ptr())>);
+        REQUIRE(*(success.ptr()) == "foo");
     }
     SECTION("non-failing functions return an error") {
         auto failure = []() -> outcome::Outcome<std::string, int> { return 1; }();
