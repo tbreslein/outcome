@@ -379,6 +379,6 @@ When including `outcome`, you need to have `C++17` features enabled for your tar
 
 ## References
 
-- [std::Result in Rust](https://doc.rust-lang.org/std/result/) + [Data.Either in Haskell](https://hackage.haskell.org/package/base-4.17.0.0/docs/Data-Either.html): What tought me how important types like these are
+- [std::Result in Rust](https://doc.rust-lang.org/std/result/) + [Data.Either in Haskell](https://hackage.haskell.org/package/base-4.17.0.0/docs/Data-Either.html): What taught me how important types like these are
 - [eyre::Result](https://docs.rs/eyre/latest/eyre/type.Result.html) + [color_eyre::eyre::Result](https://github.com/yaahc/color-eyre): Incredible UX
-- [`bitwizeshift`'s implementation'](https://github.com/bitwizeshift/result): I got the idea for `Outcome<void, E>` from there.
+- [`bitwizeshift`'s implementation](https://github.com/bitwizeshift/result): I got the idea for `Outcome<void, E>` from there.
