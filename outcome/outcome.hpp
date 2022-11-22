@@ -73,8 +73,8 @@ class [[nodiscard]] Outcome {
     /// @brief Checks whether the object contains a value of type T
     constexpr auto has_value() const noexcept -> bool { return !this->has_error(); }
 
-    /// @brief Retrieves the value; needs the value to be copy constructible
-    constexpr auto value() const noexcept {
+    /// @brief Retrieves a copy of the value; needs the value to be copy constructible
+    constexpr auto value() const {
         static_assert(std::is_copy_constructible_v<T>, ".value() requires T to be copy constructible!");
         return std::get<T>(this->_either);
     }
@@ -92,8 +92,8 @@ class [[nodiscard]] Outcome {
         return T(raw_ptr);
     }
 
-    /// @brief Retrieves the error
-    constexpr auto error() const noexcept -> E { return std::get<E>(this->_either); }
+    /// @brief Retrieves a copy of the error
+    constexpr auto error() const -> E { return std::get<E>(this->_either); }
 };
 
 /**
@@ -151,8 +151,8 @@ struct ErrorReport {
         , description{description_in}
         , file{file_in}
         , line{line_in}
-        , message{"\n** Error! **\n  Code: " + std::to_string(this->code) + "\n  File: " +
-                  this->file + "\n  Line: " + std::to_string(this->line) + "\n  Description: " + this->description} {}
+        , message{"\n** Error! **\n  Code: " + std::to_string(this->code) + "\n  File: " + this->file +
+                  "\n  Line: " + std::to_string(this->line) + "\n  Description: " + this->description} {}
 };
 
 #endif // OUTCOME_USE_ERRORREPORT
