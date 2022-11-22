@@ -65,6 +65,12 @@ executable('foo',
 #...
 ```
 
+Then, in your code, you can simply include the header with
+
+```cpp
+#include <outcome/outcome.hpp>
+```
+
 ## Usage
 
 Generally, I would always recommend having a global `using` statement in your codebase that nails down the type for your error values.
@@ -80,6 +86,8 @@ This slims down the return types of functions significantly.
 ### Regular types for values and errors
 
 ```cpp
+#include <outcome/outcome.hpp>
+
 // Let's look at functions that return a std::string on success or an int on
 // failure.
 
@@ -135,6 +143,8 @@ int main() {
 ### The `outcome::Outcome<void, E>` specialisation
 
 ```cpp
+#include <outcome/outcome.hpp>
+
 // The container features a special overload for functions that typically do
 // not return anything.
 // For that purpose, just set the payload type to void.
@@ -165,6 +175,8 @@ int main() {
 ### Non-copy types
 
 ```cpp
+#include <outcome/outcome.hpp>
+
 // When you have a function that returns something that is not
 // copy-constructible, the semantics change slightly.
 // The case that I ran into most often for this, is std::unique_ptr.
@@ -207,6 +219,8 @@ int main() {
 ### ErrorReport
 
 ```cpp
+#include <outcome/outcome.hpp>
+
 // When compiling the library with the OUTCOME_USE_ERRORREPORT compiler
 // definition you get access to the outcome::ErrorReport struct.
 // This is a small struct for carrying a bit of info about the error that
@@ -250,6 +264,8 @@ int main() {
 ### Macros
 
 ```cpp
+#include <outcome/outcome.hpp>
+
 // There are also some macros that you can add to your target by compiling it
 // with the OUTCOME_USE_MACROS compiler definition
 
