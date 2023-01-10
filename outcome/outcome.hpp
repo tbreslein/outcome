@@ -3,7 +3,7 @@
  * @brief main entry point for the outcome lib
  * @author Tommy Breslein (https://github.com/tbreslein)
  *
- * @copyright Copyright (c) 2022 Tommy Breslein <https://github.com/tbreslein>
+ * @copyright Copyright (c) 2022-2023 Tommy Breslein <https://github.com/tbreslein>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

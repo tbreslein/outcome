@@ -357,7 +357,7 @@ When including `outcome`, you need to have `C++17` features enabled for your tar
 
 `Outcome` is licensed under the [MIT License](https://opensource.org/licenses/MIT):
 
-> Copyright (c) 2022 Tommy Breslein
+> Copyright (c) 2022-2023 Tommy Breslein
 >
 > Permission is hereby granted, free of charge, to any person obtaining a copy
 > of this software and associated documentation files (the "Software"), to deal

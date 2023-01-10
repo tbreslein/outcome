@@ -2,7 +2,7 @@
 #
 # CMake file configuring the building process for Outcome
 #
-# Copyright (c) 2022 Tommy Breslein <https://github.com/tbreslein>
+# Copyright (c) 2022-2023 Tommy Breslein <https://github.com/tbreslein>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
