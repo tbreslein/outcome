@@ -1,3 +1,9 @@
+# THIS REPO HAS BEEN MIGRATED TO:
+
+https://codeberg.org/tbreslein/outcome
+
+If there's ever any further development on this, it will be there.
+
 # outcome
 
 Small implementation of a template type similar to Rust's `Result`.
