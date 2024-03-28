@@ -1,27 +1,29 @@
 {
   description = "Small lib for a type similar to Rust's Result";
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  inputs.flake-utils.url = "github:numtide/flake-utils";
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+  };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in
-      {
-        devShell = pkgs.mkShell {
-          nativeBuildInputs = with pkgs; [
+  outputs = inputs@{ self, ... }:
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
+
+      perSystem = { system, pkgs, ... }: {
+        devShells.default = pkgs.mkShell {
+          buildInputs = with pkgs; [
             cmake
             ninja
             pkg-config
             gcc12
             clang_14
+            just
 
             cppcheck
             clang-tools
             ccls
           ];
-          buildInputs = [ ];
         };
-      });
+      };
+    };
 }
